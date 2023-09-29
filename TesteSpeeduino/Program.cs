@@ -105,8 +105,7 @@ namespace TesteSpeeduino
                     }
                     else if (!sent)
                     {
-                        //Console.WriteLine(mapData);
-                        //Console.WriteLine("TESTE");
+                      
 
                         serialPort.Write("A");
                         sent = true;
