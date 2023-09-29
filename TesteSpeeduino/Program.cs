@@ -34,9 +34,9 @@ namespace TesteSpeeduino
         bool sent = false;
         bool received = false;
         uint sendTimestamp;
-        string portName = "COM4"; // Especifique o nome da porta COM desejada
+        string portName = "COM8"; // Especifique o nome da porta COM desejada
         int baudRate = 115200;
-        SerialPort serialPort = new SerialPort("COM4", 115200, Parity.None, 8 ,StopBits.One);
+        SerialPort serialPort = new SerialPort("COM8", 115200, Parity.None, 8 ,StopBits.One);
 
         static void Main(string[] args)
         {
@@ -49,7 +49,7 @@ namespace TesteSpeeduino
         void RequestData()
         {
  // Defina a taxa de transmissão apropriada
-
+            
             try
             {
                 
@@ -76,12 +76,14 @@ namespace TesteSpeeduino
 
                             if (sent)
                             {
-                                
+                                /*
                                 for (int i = 0; i < 74; i++)
                                 {
-                                    int value = speedyResponse[i];
+                                    
+                                    int value = Buffer.GetByte(speedyResponse, i);
                                     Console.WriteLine(value.ToString());
                                 }
+                                */
                                 ProcessData();
                                 received = true;
                                 ClearRX();
@@ -135,22 +137,27 @@ namespace TesteSpeeduino
         }
         void ProcessData()
         {
-            engStatus = speedyResponse[31];
+            engStatus = Buffer.GetByte(speedyResponse,31);
             rpm = (ushort)((speedyResponse[15] << 8) | speedyResponse[14]);
-            afr = speedyResponse[10];
+            afr = Buffer.GetByte(speedyResponse, 10);
             mapData = ((int)(speedyResponse[5] << 8) | speedyResponse[4]);
             
-            clt = speedyResponse[7];
+            clt = Buffer.GetByte(speedyResponse, 7);
             clt = (byte)(clt - 40);
             afrConv =(float)(afr / 10.0);
-            iat = speedyResponse[6];
+            iat = Buffer.GetByte(speedyResponse, 6);
             iat = (byte)(iat - 40);
-            tps = speedyResponse[24];
+            tps = Buffer.GetByte(speedyResponse, 24);
             tps = (int)(tps / 2.0);
-            bat = speedyResponse[9];
-            adv = speedyResponse[23];
+            bat = Buffer.GetByte(speedyResponse, 9);
+            adv = Buffer.GetByte(speedyResponse, 23);
 
-            Console.WriteLine(mapData + "MAP");
+            Console.WriteLine(afrConv.ToString() + " AFR");
+            Console.WriteLine(iat + " IAT");
+            Console.WriteLine(tps + " TPS");
+            Console.WriteLine(clt + " CLT");
+            Console.WriteLine(engStatus + " Engine Status");
+            Console.WriteLine(mapData + " MAP");
             Console.WriteLine(tps + " TPS ");
         }
 
